@@ -1,12 +1,19 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * TO DO:
+ * ENABLE MULTITHREADING X
+ * CHROME CAN SEND REQUEST X
+ * SERVER CAN PARSE REQUEST X
+ * SERVER CAN OPEN FILE X
+ * SERVER CAN SEND HTTP FILE TO CHROME CLIENT
+ * IF SERVER CAN SEND FILE ALSO SEND 200 IN ITS HEADER FILE
+ * SERVER CAN SEND 404 FOR UNAVAILABLE FILE
  */
 package com.mycompany.http.java;
-import java.util.ArrayList;
 import java.net.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -63,13 +70,43 @@ public class HTTPServer {
             out = new PrintWriter(client_sock.getOutputStream());
             
         }
+        
+        
         @Override
         public void run() {
             System.out.println( "Received a connection" );
             try {
                 //while(true){
+                    
+                    //Takes chrome get request and prints it
                     String req = in.readLine();
                     System.out.println(req);
+                    //params 0: command, param[1]: path, param[2] type
+                    String[] params = req.split(" ");
+                    
+                    String s = System.getProperty("user.dir");
+                    if(params[0].contains("GET")) {
+                        System.out.println("GET REQUEST FOUND!");
+                        //Open file
+                        String path = "C:\\Users\\chase-pc\\Documents\\GitHub\\http-java";
+                        String newstr = params[1].replace("/", "\\");
+                        
+                        path += newstr;
+                        System.out.println(path);
+                        File fp = new File(path);
+                        int code = 0;
+                        //200 OK
+                        if(fp.exists()) {
+                            System.out.println("File found!");
+                            code = 200;
+                            
+                        } else { //404 Error
+                            System.out.println("Error File not found");
+                            code = 404;
+                        }
+                        //Build chrome header with html file
+                        
+                    }
                 //}
             } catch (IOException e) {
                 System.err.println(e.getStackTrace());
