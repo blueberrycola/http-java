@@ -11,9 +11,7 @@
 package com.mycompany.http.java;
 import java.net.*;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -38,16 +36,20 @@ public class HTTPServer {
         try {
            server_sock = new ServerSocket(32000);
            System.out.println("Server Socket created on port 32000");
-           
-           //Accept clients
+           while(true) {
+               //Accept clients
            System.out.println("Listening for clients...");
            Socket client = server_sock.accept();
            System.out.println("Client Connected:" + client.getInetAddress().getHostAddress());
            System.out.println("Creating input and output for server");
-           
-//Start thread of client_handler class
+           //Start thread of client_handler class
            ClientHandler client_sock = new ClientHandler(client);
            new Thread(client_sock).start();
+           }
+           
+           
+
+           
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -94,16 +96,33 @@ public class HTTPServer {
                         path += newstr;
                         System.out.println(path);
                         File fp = new File(path);
-                        int code = 0;
+                        String code = "";
+                        String htmlbody = "";
                         //200 OK
                         if(fp.exists()) {
                             System.out.println("File found!");
-                            code = 200;
-                            
-                        } else { //404 Error
+                            code = "200 OK";
+                            //Append html body from fp
+                            Scanner scnr = new Scanner(fp);
+                            while(scnr.hasNextLine()) {
+                                htmlbody += scnr.nextLine();
+                            }
+                        //404 File not found
+                        } else {
                             System.out.println("Error File not found");
-                            code = 404;
+                            code = "404 Not Found";
+                            htmlbody = "<h1>404 File not found</h1>";
                         }
+                        int size = htmlbody.length();
+                        //Send back responce to browser
+                        out.println(params[2] + " " + code);
+                        out.println("Content-Length: " + size);
+                        out.println("");
+                        out.println(htmlbody);
+                        
+                        out.flush();
+                        System.out.println("Responce sent");
+                        
                         //Build chrome header with html file
                         
                     }
