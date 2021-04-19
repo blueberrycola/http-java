@@ -11,11 +11,8 @@
 package com.mycompany.http.java;
 import java.net.*;
 import java.io.*;
-import java.nio.file.Files;
-import java.util.Random;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 /**
  *
  * @author chase-pc
@@ -88,7 +85,7 @@ public class HTTPServer {
                     
                     String s = System.getProperty("user.dir");
                     if(params[0].contains("GET")) {
-                        System.out.println("GET REQUEST FOUND!");
+                        
                         //Open file
                         String path = "C:\\Users\\chase-pc\\Documents\\GitHub\\http-java";
                         String newstr = params[1].replace("/", "\\");
@@ -115,9 +112,8 @@ public class HTTPServer {
                         }
                         int size = htmlbody.length();
                         //Send back responce to browser
-                        out.println(params[2] + " " + code);
+                        out.println("HTTP/1.0 " + code);
                         out.println("Content-Length: " + size);
-                        out.println("");
                         out.println(htmlbody);
                         
                         out.flush();
